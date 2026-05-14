@@ -1,0 +1,20 @@
+<h1>{{ org.name }}</h1>
+<p>Ресурси: {{ org.resources }}</p>
+<p>Кількість волонтерів: {{ org.volunteers_count }}</p>
+<p>Проекти: {{ org.projects }}</p>
+
+<h2>Збори пожертв</h2>
+<a href="{% url 'fundraiser_create' org.pk %}">Додати збір</a>
+<ul>
+    {% for fund in org.fundraisers.all %}
+        <li>
+            {{ fund.title }} - {{ fund.description }}
+            <a href="{% url 'fundraiser_update' fund.pk %}">Редагувати</a>
+            <form action="{% url 'fundraiser_delete' fund.pk %}" method="POST" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Видалити</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+<a href="{% url 'org_list' %}">Назад до списку</a>
