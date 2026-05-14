@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прогноз погоди</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        .weather-card { border: 1px solid #ccc; padding: 20px; display: inline-block; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="weather-card">
+        <h2>Погода зараз (Харків)</h2>
+        <div id="weather-info">Завантаження даних...</div>
+    </div>
+
+    <script>
+        const apiKey = 'bf4f1538327002960c6bbc5be26a83e4';
+        const city = 'Kharkiv';
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=ua`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) throw new Error('Помилка мережі або невірний API ключ');
+                return response.json(); 
+            })
+            .then(data => {
+                const temp = data.main.temp;
+                const description = data.weather[0].description;
+                const iconCode = data.weather[0].icon;
+                const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+
+                const weatherInfo = document.getElementById('weather-info');
+                weatherInfo.innerHTML = `
+                    <p><strong>Температура:</strong> ${temp} °C</p>
+                    <p><strong>Опис:</strong> ${description}</p>
+                    <img src="${iconUrl}" alt="Іконка погоди">
+                `;
+            })
+            .catch(error => {
+                console.error('Сталася помилка:', error);
+            });
+    </script>
+</body>
+</html>
