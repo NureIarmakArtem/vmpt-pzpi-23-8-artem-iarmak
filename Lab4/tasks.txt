@@ -1,0 +1,61 @@
+Рівень 1
+
+2. Реалізуйте базу даних для системи керування університетом з п'ятьма таблицями: 
+Студенти, Викладачі, Курси, Заняття, Оцінки. Визначте необхідні зв'язки та обмеження.
+
+
+Створена БД MariaDB:
+CREATE TABLE teachers (
+    teacher_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    department VARCHAR(100) NOT NULL,
+    CONSTRAINT chk_teacher_email CHECK (email LIKE '%@%.%')
+);
+
+CREATE TABLE courses (
+    course_id INT AUTO_INCREMENT PRIMARY KEY,
+    course_name VARCHAR(150) NOT NULL,
+    description TEXT,
+    credits INT NOT NULL DEFAULT 3,
+    CONSTRAINT chk_credits CHECK (credits > 0 AND credits <= 12)
+);
+
+CREATE TABLE students (
+    student_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    enrollment_date DATE NOT NULL,
+    CONSTRAINT chk_student_email CHECK (email LIKE '%@%.%')
+);
+
+CREATE TABLE classes (
+    class_id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT NOT NULL,
+    teacher_id INT NOT NULL,
+    classroom VARCHAR(20) NOT NULL,
+    schedule_time DATETIME NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES courses(course_id) 
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE,
+    FOREIGN KEY (teacher_id) REFERENCES teachers(teacher_id) 
+        ON DELETE RESTRICT 
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE grades (
+    grade_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    course_id INT NOT NULL,
+    grade INT NOT NULL,
+    grade_date DATE NOT NULL,
+    CONSTRAINT chk_grade CHECK (grade >= 0 AND grade <= 100),
+    FOREIGN KEY (student_id) REFERENCES students(student_id) 
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(course_id) 
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE
+);
